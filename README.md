@@ -11,7 +11,7 @@
 - построение baseline модели,
 - серия экспериментов по улучшению качества,
 - выбор лучшего решения и анализ результатов.
-- был получен итоговый результат: mDice (test) = 0.90
+- был получен итоговый результат: mDice (test) = 0.9018
   
 # Этап 1. Исследовательский анализ (EDA)
 
@@ -55,14 +55,11 @@
 - Без дополнительных улучшений
 
 **Результаты обучения**
-Конфиг: [segformer_b0_baseline.py](configs/practicum/segformer_b0_baseline.py)
-ClearML: [обучение]()
-mDice ≈ 0.52
+- Конфиг:   [segformer_b0_baseline.py](configs/practicum/segformer_b0_baseline.py)
+- ClearML:  [segformer_b0_baseline](https://app.clear.ml/projects/412d1b341d5d427eabcbd011a4dafccf/tasks/110bec895f414ed0bfea44c855b449ac/)
+- mDice ≈ 0.5215
 
 Анализ и Вывод: модель обучается стабильно, слабая сегментация объектов из-за дисбаланса классов
-
-
-
 
 
 
@@ -71,10 +68,11 @@ EDA показал сильный дисбаланс классов: фон за
 - Идея: так как фон занимает 90%, обычный CE может переобучаться на фон. Поэтому добавляем Dice Loss или меняем loss на более устойчивый к дисбалансу.
 - Модель: SegFormer-B0
 - Loss: CrossEntropy + DiceLoss
-- Результаты обучения
-- Конфиг: [ссылка]
-- ClearML: [обучение]()
-mDice ≈ 0.52
+- 
+**Результаты обучения**
+- Конфиг:   [segformer_b0_ce_dice.py](configs/practicum/segformer_b0_ce_dice.py)
+- ClearML:  [segformer_b0_ce_dice](https://app.clear.ml/projects/412d1b341d5d427eabcbd011a4dafccf/tasks/74dd1d05477e4b1b80c7c93a51e7df8f/)
+- mDice ≈ 0.5229
 
 Анализ и Вывод: Добавление DiceLoss к CrossEntropyLoss не дало значимого улучшения, поэтому дальнейшие эксперименты будут направлены на увеличение разнообразия данных, усложнение архитектуры и компенсацию дисбаланса классов.
 
@@ -85,54 +83,68 @@ mDice ≈ 0.52
 Добавлены:повороты, фотометрические искажения
 
 **Результаты**
-Конфиг: [ссылка]
-ClearML: [обучение]()
-mDice ≈ 0.50
+- Конфиг:   [segformer_b0_aug.py](configs/practicum/segformer_b0_aug.py)
+- ClearML:  [segformer_b0_aug](https://app.clear.ml/projects/412d1b341d5d427eabcbd011a4dafccf/tasks/25481ca3e5954ff4a42f8ca08283ec52/)
+- mDice ≈ 0.5401
 
 Анализ и Вывод: качество ухудшилось, аугментации слишком агрессивны для данного домена
 
-**Эксперимент 2 — Усложнение модели (SegFormer-B2)**
-Увеличена сложность модели (B2)
 
-**Результаты**
-Конфиг: [ссылка]
-ClearML: [обучение]()
-mDice ≈ 0.57
-
-Анализ и Вывод: модель лучше извлекает признаки, заметный прирост качества
-
-**Эксперимент 3 — Class Weights**
+**Эксперимент 2 — Class Weights**
 Добавлены веса классов для компенсации дисбаланса (class_weight = [0.3, 1.5, 1.7])
 
 **Результаты**
-Конфиг: [ссылка]
-ClearML: [обучение]()
-mDice ≈ 0.56
+- Конфиг:   [segformer_b0_class_weights.py](configs/practicum/segformer_b0_class_weights.py)
+- ClearML:  [segformer_b0_class_weights](https://app.clear.ml/projects/412d1b341d5d427eabcbd011a4dafccf/tasks/b1ecfb3bdfff451e9c843bd728e026fd/)
+- mDice ≈ 0.580
 
 Анализ и Вывод: модель стала лучше учитывать редкие классы, рост качества по объектам
+
+
+
+**Эксперимент 3 — Усложнение модели (SegFormer-B2)**
+Увеличена сложность модели (B2)
+
+**Результаты**
+- Конфиг:   [segformer_b2_baseline.py](configs/practicum/segformer_b2_baseline.py)
+- ClearML:  [segformer_b2_baseline](https://app.clear.ml/projects/412d1b341d5d427eabcbd011a4dafccf/tasks/bd72677f19b542f4a4714f3745f4cd21/)
+- mDice ≈ 0.5742
+
+Анализ и Вывод: модель лучше извлекает признаки, заметный прирост качества
+
+
 
 **Эксперимент 4 — SegFormer-B2 + Class Weights (лучший)**
 Комбинация более мощной архитектуры и компенсации дисбаланса классов
 
 **Результаты**
-Конфиг: [ссылка]
-ClearML: [обучение]()
-mDice ≈ 0.90
+- Конфиг:   [segformer_b2_class_weights.py](configs/practicum/segformer_b2_class_weights.py)
+- ClearML:  [segformer_b2_class_weights](https://app.clear.ml/projects/412d1b341d5d427eabcbd011a4dafccf/tasks/00ceb5d99a414851b6076a08110ff253/)
+- mDice ≈ 0.9018
 
 Анализ и Вывод: значительное улучшение качества, модель хорошо сегментирует объекты, возможны признаки переобучения (снижение после пика)
 
 # Этап 4. Заключение и выбор лучшего эксперимента
-Лучший эксперимент SegFormer-B2 + class weights с результатом: mDice (test subset) = 0.90
+Лучший эксперимент SegFormer-B2 + class weights с результатом: mDice (test subset) = 0.9018
 
 - учитывает дисбаланс классов
 - использует более мощную архитектуру
 - показывает стабильный рост метрики
 
 # Примеры корректных предсказаний
-(вставить 3–5 изображений)
+![img](practicum_work/supplementary/viz/predictions/best/best_0_0.988_000000556500_5818.jpg.png)
+![img](practicum_work/supplementary/viz/predictions/best/best_1_0.984_000000543836_507.jpg.png)
+![img](practicum_work/supplementary/viz/predictions/best/best_2_0.983_000000437537_2563.jpg.png)
+![img](practicum_work/supplementary/viz/predictions/best/best_3_0.983_000000406211_2388.jpg.png)
+![img](practicum_work/supplementary/viz/predictions/best/best_4_0.982_000000408008_1937.jpg.png)
 
 # Примеры ошибок
-(вставить 3–5 изображений)
+![img](practicum_work/supplementary/viz/predictions/worst/worst_0_0.000_000000284884_6459.jpg.png)
+![img](practicum_work/supplementary/viz/predictions/worst/worst_1_0.000_000000308083_5809.jpg.png)
+![img](practicum_work/supplementary/viz/predictions/worst/worst_2_0.000_000000357542_1234.jpg.png)
+![img](practicum_work/supplementary/viz/predictions/worst/worst_3_0.000_000000364167_7048.jpg.png)
+![img](practicum_work/supplementary/viz/predictions/worst/worst_4_0.000_000000436539_4321.jpg.png)
+
 
 **Возможности для улучшения**
 - более точная настройка class weights
