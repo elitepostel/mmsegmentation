@@ -1,0 +1,11 @@
+type,name,score,path
+worst,000000284884_6459.jpg,0.0,practicum_work/supplementary/viz/predictions/worst/worst_0_0.000_000000284884_6459.jpg.png
+worst,000000308083_5809.jpg,0.0,practicum_work/supplementary/viz/predictions/worst/worst_1_0.000_000000308083_5809.jpg.png
+worst,000000357542_1234.jpg,0.0,practicum_work/supplementary/viz/predictions/worst/worst_2_0.000_000000357542_1234.jpg.png
+worst,000000364167_7048.jpg,0.0,practicum_work/supplementary/viz/predictions/worst/worst_3_0.000_000000364167_7048.jpg.png
+worst,000000436539_4321.jpg,0.0,practicum_work/supplementary/viz/predictions/worst/worst_4_0.000_000000436539_4321.jpg.png
+best,000000556500_5818.jpg,0.9879788827851894,practicum_work/supplementary/viz/predictions/best/best_0_0.988_000000556500_5818.jpg.png
+best,000000543836_507.jpg,0.984491365905557,practicum_work/supplementary/viz/predictions/best/best_1_0.984_000000543836_507.jpg.png
+best,000000437537_2563.jpg,0.9832528021562634,practicum_work/supplementary/viz/predictions/best/best_2_0.983_000000437537_2563.jpg.png
+best,000000406211_2388.jpg,0.9827717931087172,practicum_work/supplementary/viz/predictions/best/best_3_0.983_000000406211_2388.jpg.png
+best,000000408008_1937.jpg,0.9816044834206838,practicum_work/supplementary/viz/predictions/best/best_4_0.982_000000408008_1937.jpg.png
