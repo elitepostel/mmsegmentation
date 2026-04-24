@@ -86,7 +86,7 @@ test_dataloader = dict(
 val_evaluator = dict(type='IoUMetric', iou_metrics=['mDice'])
 test_evaluator = dict(type='IoUMetric', iou_metrics=['mDice'])
 
-train_cfg = dict(type='IterBasedTrainLoop', max_iters=8000, val_interval=1000)
+train_cfg = dict(type='IterBasedTrainLoop', max_iters=4000, val_interval=500)
 val_cfg = dict(type='ValLoop')
 test_cfg = dict(type='TestLoop')
 
@@ -94,21 +94,47 @@ default_hooks = dict(
     checkpoint=dict(
         type='CheckpointHook',
         by_epoch=False,
-        interval=1000,
+        interval=500,
         save_best='mDice',
         rule='greater',
         max_keep_ckpts=3,
     ),
     logger=dict(type='LoggerHook', interval=50, log_metric_by_epoch=False),
+    
+    early_stopping=dict(
+        type='EarlyStoppingHook',
+        monitor='mDice',
+        patience=3,
+        rule='greater'
+    )
+    
 )
 
+visualizer = dict(
+    type='SegLocalVisualizer',
+    vis_backends=[
+        dict(type='LocalVisBackend'),
+        dict(
+            type='ClearMLVisBackend',
+            init_kwargs=dict(
+                project_name='MMSegmentation Practicum',
+                task_name='segformer_b0_baseline'
+            )
+        )
+    ],
+    name='visualizer'
+)
+
+
+
 optim_wrapper = dict(
+    _delete_=True,
     type='OptimWrapper',
-    optimizer=dict(type='AdamW', lr=6e-5, weight_decay=0.01),
+    optimizer=dict(type='AdamW', lr=6e-5, betas=(0.9, 0.999), weight_decay=0.01),
 )
 
 param_scheduler = [
-    dict(type='PolyLR', eta_min=1e-6, power=1.0, begin=0, end=8000, by_epoch=False)
+    dict(type='PolyLR', eta_min=1e-6, power=1.0, begin=0, end=4000, by_epoch=False)
 ]
 
 work_dir = './work_dirs/practicum/segformer_b0_baseline'

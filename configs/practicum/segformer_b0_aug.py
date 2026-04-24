@@ -16,29 +16,31 @@ metainfo = dict(
 
 model = dict(
     data_preprocessor=dict(size=crop_size),
-    decode_head=dict(
-        num_classes=3,
-        loss_decode=[
-            dict(
-                type='CrossEntropyLoss',
-                use_sigmoid=False,
-                loss_weight=1.0,
-            ),
-            dict(
-                type='DiceLoss',
-                loss_weight=1.0,
-            ),
-        ],
-    ),
+    decode_head=dict(num_classes=3),
 )
-
 
 train_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations'),
-    dict(type='RandomFlip', prob=0.5),
+
+    dict(type='RandomFlip', prob=0.5, direction='horizontal'),
+    dict(type='RandomFlip', prob=0.5, direction='vertical'),
+
+    dict(
+        type='RandomRotate',
+        prob=0.5,
+        degree=15,
+        pad_val=0,
+        seg_pad_val=0
+    ),
+
+    dict(
+        type='PhotoMetricDistortion'
+    ),
+
     dict(type='PackSegInputs'),
 ]
+
 
 test_pipeline = [
     dict(type='LoadImageFromFile'),
@@ -108,12 +110,20 @@ default_hooks = dict(
     checkpoint=dict(
         type='CheckpointHook',
         by_epoch=False,
-        interval=5000,
+        interval=500,
         save_best='mDice',
         rule='greater',
         max_keep_ckpts=3,
     ),
     logger=dict(type='LoggerHook', interval=50, log_metric_by_epoch=False),
+    
+    early_stopping=dict(
+        type='EarlyStoppingHook',
+        monitor='mDice',
+        patience=3,
+        rule='greater'
+    )
+    
 )
 
 visualizer = dict(
@@ -124,7 +134,7 @@ visualizer = dict(
             type='ClearMLVisBackend',
             init_kwargs=dict(
                 project_name='MMSegmentation Practicum',
-                task_name='segformer_b0_ce_dice'
+                task_name='segformer_b0_baseline'
             )
         )
     ],
@@ -132,14 +142,15 @@ visualizer = dict(
 )
 
 
+
 optim_wrapper = dict(
     _delete_=True,
     type='OptimWrapper',
-    optimizer=dict(type='AdamW', lr=6e-5, weight_decay=0.01),
+    optimizer=dict(type='AdamW', lr=6e-5, betas=(0.9, 0.999), weight_decay=0.01),
 )
 
 param_scheduler = [
     dict(type='PolyLR', eta_min=1e-6, power=1.0, begin=0, end=4000, by_epoch=False)
 ]
 
-work_dir = './work_dirs/practicum/segformer_b0_ce_dice'
+work_dir = './work_dirs/practicum/segformer_b0_baseline'
